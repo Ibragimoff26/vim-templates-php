@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);
+
+namespace {{NAMESPACE}};
+
+/**
+ * Interface {{CLASS}}
+ * @author {{NAME}} <{{EMAIL}}> 
+ */
+interface {{CLASS}} {
+
+
+}

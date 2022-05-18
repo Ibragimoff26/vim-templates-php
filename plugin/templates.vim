@@ -175,6 +175,7 @@ function <SID>ExpandLanguageTemplates()
     call <SID>ExpandTemplate('MACRO_GUARD', l:macro_guard)
     call <SID>ExpandTemplate('MACRO_GUARD_FULL', l:macro_guard_full)
     call <SID>ExpandTemplate('CLASS', l:filename)
+    call <SID>ExpandTemplate('NAMESPACE', GetPHPNamespace())
     call <SID>ExpandTemplate('CAMEL_CLASS', l:camelclass)
     call <SID>ExpandTemplate('SNAKE_CLASS', l:snakeclass)
 endfunction
@@ -302,6 +303,45 @@ function <SID>AutoInitializeTemplate()
     endif
 endfunction
 
+function GetPHPNamespace()
+    let c_path = FindComposerFile()
+    let b:composer_json = js_decode(join(readfile(c_path)))
+    let path = expand('%:p:h')
+    let relPath = GetRelPath(GetWorkingDir(), path) 
+
+    let namespace = FindNameSpace(relPath)
+    echom relPath
+    let classPath = namespace[0] . substitute(relPath[strlen(namespace[1]):], "/", "\\\\\\", "g")
+
+    if classPath =~# '\\$'
+        let classPath = classPath[:-2]
+    endif
+    return classPath
+endfunction
+
+function GetWorkingDir()
+    return system('git rev-parse --show-toplevel')
+endfunction
+
+function FindComposerFile()
+    return fnamemodify(findfile('composer.json', GetWorkingDir() + ';'), ':p')
+endfunction
+
+function GetRelPath(a, t)
+    return a:t[strchars(a:a):]
+endfunction
+
+function FindNameSpace(relPath)
+    for [key, value] in items(b:composer_json.autoload['psr-4'])
+        if value =~# "/$"
+            let value = value[:-2]
+        endif
+
+        if stridx(a:relPath, value) == 0
+            return [key, value]
+        endif
+    endfor
+endfunction
 
 " Autogroup commands
 au BufNewFile * TemplateAutoInit
