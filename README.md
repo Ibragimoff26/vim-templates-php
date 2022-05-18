@@ -1,3 +1,13 @@
+# Note
+Added Composer psr-4 namespace support and 3 templates:
+
+```
+c.php.template - Class
+i.php.template - Interface
+t.php.template - Trait
+
+```
+
 # vim-templates ([vimawesome](http://vimawesome.com/plugin/vim-templates-are-made-of))
 
 Create files from predefined templates. Templates are files with `.template` extension.
